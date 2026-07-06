@@ -94,7 +94,7 @@ def _null_treatment(df_str_treat: pd.DataFrame) -> pd.DataFrame:
     return df_null_treat
 
 
-def _types_treatment(df_null_treat: pd.DataFrame) -> pd.DataFrame:
+def _types_treatment(df_null_treat: pd.DataFrame, df_type: int) -> pd.DataFrame:
     """Corrects types of DataFrame. It should be used JUST on cleaning().
 
     Args:
@@ -103,6 +103,7 @@ def _types_treatment(df_null_treat: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Dataframe with types treated
     """
+
     df_type_treat = df_null_treat.copy()
     measure_varibles = [
         "LOTAREA",
@@ -124,6 +125,9 @@ def _types_treatment(df_null_treat: pd.DataFrame) -> pd.DataFrame:
 
     df_type_treat[measure_varibles] = df_type_treat[measure_varibles].astype("float64")
 
+    if df_type == 0:
+        df_type_treat['SALEPRICE'] = df_type_treat['SALEPRICE'].astype("float64")
+    
     return df_type_treat
 
 
@@ -140,7 +144,7 @@ def cleaning(df_raw: pd.DataFrame, df_type: int) -> pd.DataFrame:
         df_null_treat = _null_treatment(df_str_treat)
         print("[2/3] NULL VALUES TREATED")
 
-        df_clean = _types_treatment(df_null_treat)
+        df_clean = _types_treatment(df_null_treat, df_type)
         print("[3/3] TYPES TREATED\n")
 
         if df_type == 0:

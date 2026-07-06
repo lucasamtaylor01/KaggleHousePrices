@@ -26,6 +26,5 @@ def main():
     df_test_clean = cleaning(df_test_raw, 1)
     df_test_clean.to_csv(CLEAN_DATA_DIR / 'test_clean.csv', index=False)
 
-
 if __name__ == "__main__":
     main()
