@@ -1,7 +1,7 @@
 # Kaggle Getting Started
 
 ## 📝 Description
-https://www.kaggle.com/competitions?hostSegmentIdFilter=5
+https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques
 
 ## ⚙️ Installation
 
