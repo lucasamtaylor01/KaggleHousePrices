@@ -5,3 +5,4 @@ plotly
 nbformat>=4.2.0
 statsmodels
 seaborn
+scikit-learn
