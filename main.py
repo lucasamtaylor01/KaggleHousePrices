@@ -12,8 +12,6 @@ RAW_DATA_DIR = DATA_DIR / "data_raw"
 CLEAN_DATA_DIR = DATA_DIR / "data_clean"
 CLEAN_DATA_DIR.mkdir(exist_ok=True)
 
-
-
 def main():
 
     df_train_raw = pd.read_csv(RAW_DATA_DIR / "train.csv")
