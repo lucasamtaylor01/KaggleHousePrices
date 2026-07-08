@@ -96,6 +96,26 @@ def _null_treatment(df_str_treat: pd.DataFrame, df_type: int) -> pd.DataFrame:
             df_null_treat["ELECTRICAL"].mode()[0]
         )
         df_null_treat["MASVNRAREA"] = df_null_treat["MASVNRAREA"].fillna(0)
+
+        # TEST-ONLY MISSING VALUES: these columns have no missing values on
+        # train, but the Kaggle test set has a handful of NaNs (e.g. houses
+        # with no basement/garage, or a few isolated categorical gaps).
+        # Every test row must be kept, so they are imputed instead of dropped.
+        zero_fill_cols = [
+            "BSMTFULLBATH", "BSMTHALFBATH", "BSMTFINSF1", "BSMTFINSF2",
+            "BSMTUNFSF", "TOTALBSMTSF", "GARAGECARS", "GARAGEAREA",
+        ]
+        for col in zero_fill_cols:
+            df_null_treat[col] = df_null_treat[col].fillna(0)
+
+        mode_fill_cols = [
+            "MSZONING", "UTILITIES", "FUNCTIONAL", "KITCHENQUAL",
+            "EXTERIOR1ST", "EXTERIOR2ND", "SALETYPE",
+        ]
+        for col in mode_fill_cols:
+            df_null_treat[col] = df_null_treat[col].fillna(
+                df_null_treat[col].mode()[0]
+            )
     df_null_treat["MISCFEATURE"] = df_null_treat["MISCFEATURE"].fillna("NA")
     df_null_treat["ALLEY"] = df_null_treat["ALLEY"].fillna("NA")
     df_null_treat["FENCE"] = df_null_treat["FENCE"].fillna("NA")

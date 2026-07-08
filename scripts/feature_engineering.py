@@ -246,7 +246,6 @@ def _remove_outliers(df: pd.DataFrame, cols: list) -> pd.DataFrame:
             df_out = df_out[~mask_outliers]
 
     pct_removed = round((df.shape[0] - df_out.shape[0]) / df.shape[0] * 100, 2)
-    print(f"{pct_removed}% removed")
 
     return df_out
 
@@ -494,7 +493,6 @@ def _remove_high_vif(df: pd.DataFrame, threshold: float, exclude_cols: list) -> 
             break
 
         var_to_drop = vif_data.sort_values("VIF", ascending=False).iloc[0]["VARIAVEL"]
-        print(f"Removendo '{var_to_drop}' (VIF={max_vif:.2f})")
         X = X.drop(columns=[var_to_drop])
         dropped_cols.append(var_to_drop)
 

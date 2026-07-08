@@ -2,6 +2,7 @@ from pathlib import Path
 import pandas as pd
 from scripts.cleaning import cleaning
 from scripts.feature_engineering import feature_engineering
+from scripts.modeling import modeling
 
 # PATH DEFINITIONS
 
@@ -34,6 +35,10 @@ def main():
 
     df_test_model, _ = feature_engineering(df_test_clean, 1, fe_artifacts)
     df_test_model.to_csv(MODEL_DATA_DIR / 'test_model.csv', index=False)
+
+    print("\nSTARTING MODELING PROCESS...\n\n")
+    submission = modeling(df_train_model, df_test_model)
+    submission.to_csv(DATA_DIR / 'submission.csv', index=False)
 
 if __name__ == "__main__":
     main()
