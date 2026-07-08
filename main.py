@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
 from scripts.cleaning import cleaning
+from scripts.feature_engineering import feature_engineering
 
 # PATH DEFINITIONS
 
@@ -11,6 +12,9 @@ RAW_DATA_DIR = DATA_DIR / "data_raw"
 
 CLEAN_DATA_DIR = DATA_DIR / "data_clean"
 CLEAN_DATA_DIR.mkdir(exist_ok=True)
+
+MODEL_DATA_DIR = DATA_DIR / "data_model"
+MODEL_DATA_DIR.mkdir(exist_ok=True)
 
 def main():
 
@@ -23,6 +27,13 @@ def main():
 
     df_test_clean = cleaning(df_test_raw, 1)
     df_test_clean.to_csv(CLEAN_DATA_DIR / 'test_clean.csv', index=False)
+
+    print("\nSTARTING FEATURE ENGINEERING PROCESS...\n\n")
+    df_train_model, fe_artifacts = feature_engineering(df_train_clean, 0)
+    df_train_model.to_csv(MODEL_DATA_DIR / 'train_model.csv', index=False)
+
+    df_test_model, _ = feature_engineering(df_test_clean, 1, fe_artifacts)
+    df_test_model.to_csv(MODEL_DATA_DIR / 'test_model.csv', index=False)
 
 if __name__ == "__main__":
     main()

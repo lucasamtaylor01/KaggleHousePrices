@@ -24,13 +24,17 @@ def _string_treatment(df_raw: pd.DataFrame) -> pd.DataFrame:
     return df_str_treat
 
 
-def _null_treatment(df_str_treat: pd.DataFrame) -> pd.DataFrame:
+def _null_treatment(df_str_treat: pd.DataFrame, df_type: int) -> pd.DataFrame:
     """This function treats null values of DataFrame, filling or dropping them depending
     on the column, and also drops rows with inconsistent basement data.
+    On the test DataFrame (df_type == 1) no rows may be dropped, since every
+    row needs a prediction, so the rows that would be dropped on train are
+    filled instead.
     It should be used JUST on cleaning().
 
     Args:
         df_str_treat (pd.DataFrame): Dataframe with string treated
+        df_type (int): 0 for train, 1 for test
 
     Returns:
         pd.DataFrame: Dataframe with null values treated
@@ -54,21 +58,22 @@ def _null_treatment(df_str_treat: pd.DataFrame) -> pd.DataFrame:
     df_null_treat["BSMTQUAL"] = df_null_treat["BSMTQUAL"].fillna("NA")
     df_null_treat["BSMTFINTYPE1"] = df_null_treat["BSMTFINTYPE1"].fillna("NA")
 
-    bsmt_columns = [
-        "BSMTFINTYPE2",
-        "BSMTEXPOSURE",
-        "BSMTCOND",
-        "BSMTQUAL",
-        "BSMTFINTYPE1",
-    ]
-    df_null_treat_bsmt = df_null_treat[bsmt_columns].copy()
+    if df_type == 0:
+        bsmt_columns = [
+            "BSMTFINTYPE2",
+            "BSMTEXPOSURE",
+            "BSMTCOND",
+            "BSMTQUAL",
+            "BSMTFINTYPE1",
+        ]
+        df_null_treat_bsmt = df_null_treat[bsmt_columns].copy()
 
-    mask = (df_null_treat_bsmt["BSMTCOND"].notnull()) & (
-        (df_null_treat_bsmt["BSMTEXPOSURE"].isnull())
-        | (df_null_treat_bsmt["BSMTFINTYPE2"].isnull())
-    )
-    filter = ~mask
-    df_null_treat = df_null_treat[filter].reset_index(drop=True)
+        mask = (df_null_treat_bsmt["BSMTCOND"].notnull()) & (
+            (df_null_treat_bsmt["BSMTEXPOSURE"].isnull())
+            | (df_null_treat_bsmt["BSMTFINTYPE2"].isnull())
+        )
+        filter = ~mask
+        df_null_treat = df_null_treat[filter].reset_index(drop=True)
 
     df_null_treat["BSMTFINTYPE2"] = df_null_treat["BSMTFINTYPE2"].fillna("NA")
     df_null_treat["BSMTEXPOSURE"] = df_null_treat["BSMTEXPOSURE"].fillna("NA")
@@ -84,7 +89,13 @@ def _null_treatment(df_str_treat: pd.DataFrame) -> pd.DataFrame:
     df_null_treat["FIREPLACEQU"] = df_null_treat["FIREPLACEQU"].fillna("NA")
 
     # OTHERS
-    df_null_treat = df_null_treat.dropna(subset=["ELECTRICAL", "MASVNRAREA"])
+    if df_type == 0:
+        df_null_treat = df_null_treat.dropna(subset=["ELECTRICAL", "MASVNRAREA"])
+    else:
+        df_null_treat["ELECTRICAL"] = df_null_treat["ELECTRICAL"].fillna(
+            df_null_treat["ELECTRICAL"].mode()[0]
+        )
+        df_null_treat["MASVNRAREA"] = df_null_treat["MASVNRAREA"].fillna(0)
     df_null_treat["MISCFEATURE"] = df_null_treat["MISCFEATURE"].fillna("NA")
     df_null_treat["ALLEY"] = df_null_treat["ALLEY"].fillna("NA")
     df_null_treat["FENCE"] = df_null_treat["FENCE"].fillna("NA")
@@ -141,7 +152,7 @@ def cleaning(df_raw: pd.DataFrame, df_type: int) -> pd.DataFrame:
         df_str_treat = _string_treatment(df_raw)
         print("[1/3] STRINGS TREATED")
 
-        df_null_treat = _null_treatment(df_str_treat)
+        df_null_treat = _null_treatment(df_str_treat, df_type)
         print("[2/3] NULL VALUES TREATED")
 
         df_clean = _types_treatment(df_null_treat, df_type)
