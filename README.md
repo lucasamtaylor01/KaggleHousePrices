@@ -17,7 +17,7 @@
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/lucasamtaylor01/Kaggle_Getting_Started.git
+   git clone https://github.com/lucasamtaylor01/KaggleHousePrices.git
    ```
 2. Install the dependencies
     
